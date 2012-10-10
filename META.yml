@@ -1,0 +1,43 @@
+--- #YAML:1.0
+name:               Math-NumSeq-Alpha
+version:            1
+abstract:           Alphabetical number sequences.
+author:
+    - Kevin Ryde <user42@zip.com.au>
+license:            gpl
+distribution_type:  module
+configure_requires:
+    ExtUtils::MakeMaker:  0
+build_requires:
+    ExtUtils::MakeMaker:  0
+requires:
+    constant:             1.02
+    constant::defer:      1
+    Lingua::Any::Numbers:  0
+    Lingua::EN::Numbers:  0
+    List::Util:           0
+    Math::NumSeq:         0
+    Math::NumSeq::Base::IterateIth:  0
+    Math::NumSeq::OEIS::Catalogue::Plugin:  0
+    perl:                 5.004
+    Test:                 0
+resources:
+    homepage:  http://user42.tuxfamily.org/math-numseq/index.html
+    license:   http://www.gnu.org/licenses/gpl.html
+no_index:
+    directory:
+        - t
+        - inc
+        - devel
+        - xt
+generated_by:       ExtUtils::MakeMaker version 6.57_05
+meta-spec:
+    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
+    version:  1.4
+optional_features:
+    maximum_tests:
+        description:  Have "make test" do as much as possible.
+        requires:
+            Data::Float:  0
+recommends:
+    Lingua::Any::Numbers:  0.44
