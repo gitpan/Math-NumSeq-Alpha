@@ -16,5 +16,8 @@ You should have received a copy of the GNU General Public License along
 with Math-NumSeq-Alpha.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Version 2, October 2012
+    - new SevenSegments
+
 Version 1, October 2012
-    - the first version, including AlphabeticalLength, AlphabeticalLengthSteps
+    - the first version, AlphabeticalLength and AlphabeticalLengthSteps

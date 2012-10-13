@@ -20,7 +20,7 @@ use 5.004;
 use strict;
 
 use vars '$VERSION', '@ISA';
-$VERSION = 1;
+$VERSION = 2;
 use Math::NumSeq::OEIS::Catalogue::Plugin;
 @ISA = ('Math::NumSeq::OEIS::Catalogue::Plugin');
 
@@ -43,7 +43,8 @@ use constant::defer info_arrayref => sub {
           {
            anum  => 'A006944',
            class => 'Math::NumSeq::AlphabeticalLength',
-           parameters => [ i_start => 1, number_type => 'ordinal' ],
+           parameters => [ number_type => 'ordinal',
+                           i_start => 1, conjunctions => 0 ],
           },
           {
            anum  => 'A016037',
@@ -163,6 +164,30 @@ use constant::defer info_arrayref => sub {
               parameters => [ lang => 'tr', i_start => 1 ],
              }
            : ()),
+
+
+          # SevenSegments
+          {
+           anum  => 'A063720',
+           class => 'Math::NumSeq::SevenSegments',
+           parameters => [ six => 5 ],
+          },
+          {
+           anum  => 'A006942',
+           class => 'Math::NumSeq::SevenSegments',
+           parameters => [ nine => 6 ],
+          },
+          {
+           anum  => 'A074458',
+           class => 'Math::NumSeq::SevenSegments',
+           parameters => [ seven => 4 ],
+          },
+          {
+           anum  => 'A010371',
+           class => 'Math::NumSeq::SevenSegments',
+           parameters => [ seven => 4, nine => 6 ],
+          },
+
          ];
 };
 

@@ -124,7 +124,7 @@ sub check_class {
   # return unless $class =~ /Pisano/;
   # return unless $class =~ /FibonacciFreq/;
   # return unless $class =~ /RadixConv/;
-   return unless $anum eq 'A095810';
+  # return unless $anum eq 'A095810';
 
   eval "require $class" or die;
 
@@ -430,19 +430,19 @@ sub check_class {
 #------------------------------------------------------------------------------
 # OEIS-Catalogue generated vs files
 
-use File::Path;
-File::Path::make_path('lib/Math/NumSeq/OEIS/Catalogue/Plugin/');
-system("cd devel && perl ../tools/make-oeis-catalogue.pl --module=TempDevel --other=both") == 0
-  or die;
-require 'devel/lib/Math/NumSeq/OEIS/Catalogue/Plugin/TempDevel.pm';
-unlink  'devel/lib/Math/NumSeq/OEIS/Catalogue/Plugin/TempDevel.pm' or die;
-# rmdir  'devel/lib/Math/NumSeq/OEIS/Catalogue/Plugin' or die;
-# rmdir  'devel/lib/Math/NumSeq/OEIS/Catalogue' or die;
-# rmdir  'devel/lib/Math/NumSeq/OEIS' or die;
-my $aref = Math::NumSeq::OEIS::Catalogue::Plugin::TempDevel::info_arrayref();
+# use File::Path;
+# File::Path::make_path('lib/Math/NumSeq/OEIS/Catalogue/Plugin/');
+# system("cd devel && perl ../tools/make-oeis-catalogue.pl --module=TempDevel --other=both") == 0
+#   or die;
+# require 'devel/lib/Math/NumSeq/OEIS/Catalogue/Plugin/TempDevel.pm';
+# unlink  'devel/lib/Math/NumSeq/OEIS/Catalogue/Plugin/TempDevel.pm' or die;
+# # rmdir  'devel/lib/Math/NumSeq/OEIS/Catalogue/Plugin' or die;
+# # rmdir  'devel/lib/Math/NumSeq/OEIS/Catalogue' or die;
+# # rmdir  'devel/lib/Math/NumSeq/OEIS' or die;
+# my $aref = Math::NumSeq::OEIS::Catalogue::Plugin::TempDevel::info_arrayref();
 
-# require Math::NumSeq::OEIS::Catalogue::Plugin::Alpha;
-# $aref = Math::NumSeq::OEIS::Catalogue::Plugin::Alpha::info_arrayref();
+require Math::NumSeq::OEIS::Catalogue::Plugin::Alpha;
+my $aref = Math::NumSeq::OEIS::Catalogue::Plugin::Alpha::info_arrayref();
 
 foreach my $info (@$aref) {
   ### $info

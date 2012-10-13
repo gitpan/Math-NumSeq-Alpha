@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 # Copyright 2012 Kevin Ryde
 
@@ -24,6 +24,59 @@ use Lingua::Any::Numbers;
 use Math::NumSeq::AlphabeticalLength;
 
 # use Smart::Comments;
+
+
+
+
+{
+  # cycles
+  require Math::NumSeq::AlphabeticalLength;
+  my $langs = Math::NumSeq::AlphabeticalLength->parameter_info_hash->{'lang'}->{'choices'};
+
+  foreach my $lang (@$langs) {
+    foreach my $number_type ('cardinal','ordinal') {
+      printf "%3s %8s  ", $lang, $number_type;
+      my $seq = Math::NumSeq::AlphabeticalLength->new
+        (number_type => $number_type,
+         lang => $lang);
+      foreach my $i ($seq->i_start .. 500) {
+        my $len = $seq->ith($i) // next;
+        if ($len == $i) {
+          next;
+        }
+        my $len2 = $seq->ith($len) // next;
+        if ($len2 == $i) {
+          print " $i-$len-$len2";
+        }
+      }
+      print "\n";
+    }
+  }
+  exit 0;
+}
+
+{
+  # numbers which are their own length
+  require Math::NumSeq::AlphabeticalLength;
+  my $langs = Math::NumSeq::AlphabeticalLength->parameter_info_hash->{'lang'}->{'choices'};
+
+  foreach my $lang (@$langs) {
+    foreach my $number_type ('cardinal','ordinal') {
+      printf "%3s %8s  ", $lang, $number_type;
+      my $seq = Math::NumSeq::AlphabeticalLength->new
+        (number_type => $number_type,
+         lang => $lang);
+      foreach my $i ($seq->i_start .. 200) {
+        my $len = $seq->ith($i) // next;
+        if ($len == $i) {
+          print " $i";
+        }
+      }
+      print "\n";
+    }
+  }
+  exit 0;
+}
 
 
 # got  4,3,2,3,4,3,3,3,3,3,3,4,4,7,7,6,6,7,5,6,5,8,7,8,9,8,8,8,8,8,7,10,9,10,11,10,10,10,10,10,6,9,8,9,10,9,9,9,9,9,6,9,8,9,10,9,9,9,9,9,6,9,8,9,10,9,9,9,9,9,7,10,9,10,11,10,10,10,10,10,4,7,6,7,8,7,7,7,7,7,6
@@ -82,29 +135,6 @@ use Math::NumSeq::AlphabeticalLength;
   exit 0;
 }
 
-
-{
-  # own length
-  require Math::NumSeq::AlphabeticalLengthSteps;
-  my $languages = Math::NumSeq::AlphabeticalLengthSteps->parameter_info_hash->{'language'}->{'choices'};
-
-  foreach my $language (@$languages) {
-    foreach my $number_type ('cardinal','ordinal') {
-      printf "%3s %8s  ", $language, $number_type;
-      my $seq = Math::NumSeq::AlphabeticalLength->new
-        (number_type => $number_type,
-         lang => $language);
-      foreach my $i ($seq->i_start .. 200) {
-        my $len = $seq->ith($i) // next;
-        if ($len == $i) {
-          print " $i";
-        }
-      }
-      print "\n";
-    }
-  }
-  exit 0;
-}
 
 {
   my @d = (1, 3, 3, 2, 0, 1, 3, 2, 2, 1, 3, 4, 4, 3, 3, 3, 3, 2, 3, 3, 4, 2, 2, 5,

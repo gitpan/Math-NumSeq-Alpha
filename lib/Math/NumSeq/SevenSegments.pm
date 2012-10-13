@@ -18,10 +18,10 @@
 package Math::NumSeq::SevenSegments;
 use 5.004;
 use strict;
-use List::Util 'sum';
+use List::Util 'min','max','sum';
 
 use vars '$VERSION', '@ISA';
-$VERSION = 1;
+$VERSION = 2;
 use Math::NumSeq;
 use Math::NumSeq::Base::IterateIth;
 @ISA = ('Math::NumSeq::Base::IterateIth',
@@ -37,26 +37,43 @@ use Math::NumSeq::Repdigits;
 
 # use constant name => Math::NumSeq::__('...');
 use constant description => Math::NumSeq::__('Number of segments for i written in 7-segment calculator display.');
-use constant default_i_start => 1;
+use constant default_i_start => 0;
+use constant values_min => 2; # "1" using 2 segments
 use constant characteristic_count => 1;
 use constant characteristic_smaller => 1;
 use constant characteristic_integer => 1;
-use constant values_min => 2;
+use constant parameter_info_array =>
+  [
+   {
+    name    => 'seven',
+    display => ('Seven'),
+    type    => 'integer',
+    default => 3,
+    minimum => 3,
+    maximum => 4,
+    description => ('How many segments to count for "7".'),
+   },
+   {
+    name    => 'nine',
+    display => ('Nine'),
+    type    => 'integer',
+    default => 5,
+    minimum => 5,
+    maximum => 6,
+    description => ('How many segments to count for "9".'),
+   },
+  ];
 
-# seven_segments => '7sans,9sans';
-# seven_style => 'sans'
-# seven=>3,4
-# nine=>5,6
 #------------------------------------------------------------------------------
 
-# 7 choice of  ---     --- 
+# 7 choice of  ---     ---
 #                 |   |   |
-#                          
+#
 #                 |       |
-#               
-# 9 choice of  ---     --- 
+#
+# 9 choice of  ---     ---
 #             |   |   |   |
-#              ---     --- 
+#              ---     ---
 #                 |       |
 #                      ---
 #
@@ -72,23 +89,39 @@ use constant values_min => 2;
 # A018849 same upside down squares, seven-seg
 # A053701 vertically symmetric
 # A007284 - horizontally symmetric
+# A074459 num segments changed to display n+1
 
-use constant oeis_anum => 'A006942';
-
+my %oeis_anum = ('5,3,5' => 'A063720',
+                 '6,3,6' => 'A006942',
+                 '6,4,5' => 'A074458',
+                 '6,4,6' => 'A010371',
+                );
+sub oeis_anum {
+  my ($self) = @_;
+  my $digit_segments = $self->{'digit_segments'};
+  return $oeis_anum{join(',',@{$digit_segments}{'6','7','9'})}; # hash slice
+}
 
 #------------------------------------------------------------------------------
 
-my @digit_segments = (6,   # 0
-                      2,   # 1
-                      5,   # 2
-                      5,   # 3
-                      4,   # 4
-                      5,   # 5
-                      6,   # 6
-                      3,   # 7
-                      7,   # 8
-                      6,   # 9
-                     );
+sub new {
+  my $self = shift->SUPER::new(@_);
+
+  ### $self
+  $self->{'digit_segments'} = { 0   => 6,
+                                1   => 2,
+                                2   => 5,
+                                3   => 5,
+                                4   => 4,
+                                5   => 5,
+                                6   => ($self->{'six'} || 6),
+                                7   => $self->{'seven'},
+                                8   => 7,
+                                9   => $self->{'nine'},
+                                '-' => 1,  # for negatives
+                              };
+  return $self;
+}
 
 sub ith {
   my ($self, $i) = @_;
@@ -97,17 +130,8 @@ sub ith {
   if (_is_infinite($i)) {
     return undef;
   }
-  if ($i == 0) {
-    return $digit_segments[0]; # single zero digit
-  }
-  my $neg;
-  if ($i < 0) {
-    $neg = 1;   # extra segment for "-"
-    $i = -$i;
-  } else {
-    $neg = 0;
-  }
-  return sum ($neg, map {$digit_segments[$_]} _digit_split_lowtohigh($i,10));
+  my $digit_segments = $self->{'digit_segments'};
+  return sum (0, map {$digit_segments->{$_}||0} split(//,$i));
 }
 
 1;
@@ -117,7 +141,7 @@ __END__
 
 =head1 NAME
 
-Math::NumSeq::SevenSegments -- count of segments to display in 7-segment LED 
+Math::NumSeq::SevenSegments -- count of segments to display by 7-segment LED 
 
 =head1 SYNOPSIS
 
@@ -129,8 +153,10 @@ Math::NumSeq::SevenSegments -- count of segments to display in 7-segment LED
 
 This is how many segments are lit to display i in 7-segment LEDs
 
-    starting i=0
-    2, 5, 5, 4, 5, 6, 3, 7, 6, 8, 4, 7, 7, 6, 7, 8, 5, 9, 8, 11, ...
+    i     = 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 ...
+    value = 2, 5, 5, 4, 5, 6, 3, 7, 6, 8, 4, 7, 7, 6, 7, 8, 5 ...
+
+The segments for each digit are
 
      ---                 ---       ---           
     |   |         |         |         |     |   |
@@ -142,7 +168,22 @@ This is how many segments are lit to display i in 7-segment LEDs
     |         |             |     |   |     |   |
      ---       ---                 ---       --- 
         |     |   |         |     |   |         |
-     ---       ---                 ---       --- 
+     ---       ---                 ---           
+
+Sometimes 7 and 9 have "serif" segments 
+
+     ---        --- 
+    |   |      |   |
+                --- 
+        |          |
+                --- 
+
+The C<seven =E<gt> $integer> and C<nine =E<gt> $integer> options give how
+many segments those digits should be reckoned.  Seven can be 3 or 4.  Nine
+can be 5 or 6.
+
+The total is similar to L<Math::NumSeq::DigitSum>, but with digits mapped
+through a table of segment counts 0-E<gt>6, 1-E<gt>2, 2-E<gt>5, etc.
 
 =head1 FUNCTIONS
 
@@ -151,6 +192,8 @@ See L<Math::NumSeq/FUNCTIONS> for behaviour common to all sequence classes.
 =over 4
 
 =item C<$seq = Math::NumSeq::SevenSegments-E<gt>new ()>
+
+=item C<$seq = Math::NumSeq::SevenSegments-E<gt>new (seven =E<gt> $int, nine =E<gt> $int)>
 
 Create and return a new sequence object.
 
@@ -173,6 +216,7 @@ Return 0, the first term in the sequence being at i=0.
 =head1 SEE ALSO
 
 L<Math::NumSeq>,
+L<Math::NumSeq::DigitSum>,
 L<Math::NumSeq::DigitLength>,
 L<Math::NumSeq::AlphabeticalLength>
 

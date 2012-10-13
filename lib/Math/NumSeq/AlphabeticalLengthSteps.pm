@@ -15,13 +15,21 @@
 # You should have received a copy of the GNU General Public License along
 # with Math-NumSeq-Alpha.  If not, see <http://www.gnu.org/licenses/>.
 
+
+
+# Should values in cycles be all 0 ?
+
+
+
+
+
 package Math::NumSeq::AlphabeticalLengthSteps;
 use 5.004;
 use strict;
 use List::Util 'min';
 
 use vars '$VERSION', '@ISA';
-$VERSION = 1;
+$VERSION = 2;
 use Math::NumSeq;
 use Math::NumSeq::Base::IterateIth;
 @ISA = ('Math::NumSeq::Base::IterateIth',
@@ -63,7 +71,7 @@ my %oeis_anum = (A005589 => 'A016037', # en cardinals
                 );
 sub oeis_anum {
   my ($self) = @_;
-  return $oeis_anum{$self->{'lenseq'}->oeis_anum};
+  return $oeis_anum{$self->{'lenseq'}->oeis_anum || ''};
 }
 
 # forty two = 8
@@ -129,6 +137,18 @@ sub ith {
 1;
 __END__
 
+# =head2 Lang
+# 
+# The default is English, or the C<lang> option can select anything known to
+# L<Lingua::Any::Numbers>.  For example French,
+# 
+#     lang => 'fr'
+#     5, 4, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 4, 4, 5, 5, ...
+# 
+# The first cycle is at i=3="trois" has 5 letters, 5="cinq" has 4 letters,
+# 4="quatre" has 6 letters, 6="six" has 3 letters.
+
+
 =for stopwords Ryde Math-NumSeq
 
 =head1 NAME
@@ -149,10 +169,10 @@ S<i -E<gt> AlphabeticalLength(i)> until reaching a cycle.
     i     = 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 
     value = 3, 3, 2, 0, 1, 3, 2, 2, 1, 3, 4, 4, 3, 3, 3, ...
 
-In English "four" and has 4 letters, so at i=4 the value is 0 for no steps
-to reach a cycle.  Then for example i=6 goes "six" is 3 letters, 3="three"
-is 5 letters, 5="five" is 4 letters, taking 3 steps to reach the cycle at
-4-E<gt>4.
+For example i=6="six" is 3 letters, then 3="three" is 5 letters, 5="five" is
+4 letters, and 4="four" is its own length.  This took 3 steps to reach the
+cycle at 4-E<gt>4.  At i=4 the value is 0 for no steps to reach a cycle
+"four"=4.
 
 =head1 FUNCTIONS
 
@@ -174,13 +194,9 @@ Create and return a new sequence object.
 
 =item C<$value = $seq-E<gt>ith($i)>
 
-Return the number of letters in C<$i> written out in the selected language.
+Return the number times to apply AlphabeticalLength until reaching a cycle.
 
 =cut
-
-# =item C<$i = $seq-E<gt>i_start ()>
-# 
-# Return 1, the first term in the sequence being at i=1.
 
 =back
 

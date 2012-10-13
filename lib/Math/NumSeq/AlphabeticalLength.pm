@@ -21,7 +21,7 @@ use strict;
 use List::Util 'min';
 
 use vars '$VERSION', '@ISA';
-$VERSION = 1;
+$VERSION = 2;
 use Math::NumSeq;
 use Math::NumSeq::Base::IterateIth;
 @ISA = ('Math::NumSeq::Base::IterateIth',
@@ -52,8 +52,7 @@ use constant::defer parameter_info_array => sub {
   # move 'EN' to the start, if it exists (which it should)
   foreach my $i (0 .. $#choices) {
     if ($choices[$i] eq 'EN') {
-      my $en = splice @choices, $i, 1, 0;
-      unshift @choices, $en;
+      unshift @choices, splice(@choices, $i, 1);
       last;
     }
   }
@@ -135,7 +134,7 @@ sub values_min {
 # catalogued in Alpha.pm
 my %oeis_anum
   = ('en,cardinal,0,noand' => 'A005589',
-     'en,ordinal,1'  => 'A006944',
+     'en,ordinal,1,noand'  => 'A006944',
 
      # Lingua::CS::Num2Word doubtful ...
      'cs,cardinal,1' => 'A010038', # Czech, Lingua::CS::Num2Word
@@ -363,7 +362,8 @@ other language modules might give incorrect lengths.
 
 L<Math::NumSeq>,
 L<Math::NumSeq::AlphabeticalLengthSteps>
-L<Math::NumSeq::DigitLength>
+L<Math::NumSeq::DigitLength>,
+L<Math::NumSeq::SevenSegments>
 
 L<Lingua::Any::Numbers>
 
